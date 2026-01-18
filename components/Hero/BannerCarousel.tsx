@@ -38,6 +38,19 @@ const BannerCarousel = ({ articles }: { articles: IArticle[] }) => {
 
     return (
         <div className="relative h-screen w-full overflow-hidden">
+
+            {/* Indicators/Dots (Optional but good for UX) */}
+            <div className="absolute top-40 left-0 right-0 z-10 flex justify-center gap-2">
+                {articles.map((_, index) => (
+                    <button
+                        key={index}
+                        onClick={() => setCurrentIndex(index)}
+                        className={`h-2 rounded-full transition-all ${index === currentIndex ? "w-8 bg-primary" : "w-2 bg-white/50 hover:bg-white"
+                            }`}
+                        aria-label={`Go to slide ${index + 1}`}
+                    />
+                ))}
+            </div>
             <AnimatePresence mode="wait">
                 <motion.div
                     key={currentArticle._id}
@@ -85,19 +98,6 @@ const BannerCarousel = ({ articles }: { articles: IArticle[] }) => {
                     </div>
                 </motion.div>
             </AnimatePresence>
-
-            {/* Indicators/Dots (Optional but good for UX) */}
-            <div className="absolute bottom-10 left-0 right-0 z-10 flex justify-center gap-2">
-                {articles.map((_, index) => (
-                    <button
-                        key={index}
-                        onClick={() => setCurrentIndex(index)}
-                        className={`h-2 rounded-full transition-all ${index === currentIndex ? "w-8 bg-primary" : "w-2 bg-white/50 hover:bg-white"
-                            }`}
-                        aria-label={`Go to slide ${index + 1}`}
-                    />
-                ))}
-            </div>
         </div>
     );
 };

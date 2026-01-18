@@ -13,6 +13,7 @@ import Contact from "@/components/Contact";
 import Blog from "@/components/Blog";
 import Testimonial from "@/components/Testimonial";
 import Banner from "@/components/Hero/Banner";
+import Search from "@/components/Hero/Search";
 
 export const metadata: Metadata = {
   title: "Next.js Starter Template for SaaS Startups - Solid SaaS Boilerplate",
@@ -25,6 +26,7 @@ export default function Home() {
   return (
     <main>
       <Banner />
+      <Search />
       <Hero />
       <Brands />
       <Feature />
