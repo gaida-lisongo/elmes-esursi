@@ -7,10 +7,14 @@ import ScrollToTop from "@/components/ScrollToTop";
 import { ThemeProvider } from "next-themes";
 import ToasterContext from "../context/ToastContext";
 
+import { Menu } from "@/types/menu";
+
 export default function ClientLayout({
     children,
+    menuData,
 }: {
     children: React.ReactNode;
+    menuData?: Menu[];
 }) {
     return (
         <ThemeProvider
@@ -19,7 +23,7 @@ export default function ClientLayout({
             defaultTheme="light"
         >
             <Lines />
-            <Header />
+            <Header customMenuData={menuData} />
             <ToasterContext />
             {children}
             <Footer />

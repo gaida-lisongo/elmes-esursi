@@ -3,10 +3,11 @@ import { Menu } from "@/types/menu";
 const menuData: Menu[] = [
   {
     id: 1,
-    title: "Home",
+    title: "Acceuil",
     newTab: false,
     path: "/",
   },
+  // Placeholder for dynamic cycles, will be merged in parent
   {
     id: 2,
     title: "Features",
@@ -68,12 +69,11 @@ const menuData: Menu[] = [
       },
     ],
   },
-
   {
     id: 4,
-    title: "Support",
+    title: "Contact",
     newTab: false,
-    path: "/support",
+    path: "/contact",
   },
 ];
 
