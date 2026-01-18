@@ -1,5 +1,6 @@
 import { annee } from "@/types/annee";
 import AnneeClient from "./AnneeClient";
+import FraisClient from "./Frais";
 
 const Annee = async () => {
     try {
@@ -17,12 +18,35 @@ const Annee = async () => {
 
         const { annees } = res;
         const activeAnnee = annees[0];
-        console.log("Data Années : ", activeAnnee);
+
         if (!activeAnnee) {
             return null;
         }
 
-        return <AnneeClient annee={activeAnnee} />;
+        const reqFrais = await fetch("https://esursi-app.vercel.app/api/frais?annee=" + activeAnnee._id);
+
+        if (!reqFrais.ok) {
+            return null;
+        }
+
+        const resFrais = await reqFrais.json();
+
+        if (resFrais?.success) {
+            const { frais } = resFrais;
+
+            return (
+                <div>
+                    <AnneeClient annee={activeAnnee} />
+                    <FraisClient data={frais} />
+                </div>
+            );
+        }
+
+        return (
+            <div>
+                <AnneeClient annee={activeAnnee} />
+            </div>
+        );
 
     } catch (error) {
         console.error("Failed to fetch academic year:", error);
