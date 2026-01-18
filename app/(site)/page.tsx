@@ -14,6 +14,7 @@ import Blog from "@/components/Blog";
 import Testimonial from "@/components/Testimonial";
 import Banner from "@/components/Hero/Banner";
 import Search from "@/components/Hero/Search";
+import Annee from "@/components/Testimonial/Annee";
 
 export const metadata: Metadata = {
   title: "Next.js Starter Template for SaaS Startups - Solid SaaS Boilerplate",
@@ -27,6 +28,7 @@ export default function Home() {
     <main>
       <Banner />
       <Search />
+      <Annee />
       <Hero />
       <Brands />
       <Feature />
