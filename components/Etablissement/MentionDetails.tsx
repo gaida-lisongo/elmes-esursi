@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
 import { Faculte, Domaine } from "@/types/cycle";
 import { IEtablissementWithMentions } from "./EtablissementDetails";
+import FaculteCard from "./FaculteCard";
+import FaculteDetail from "./FaculteDetail";
 
 interface MentionDetailsProps {
     etablissement: IEtablissementWithMentions;
@@ -11,6 +12,7 @@ interface MentionDetailsProps {
 
 const MentionDetails = ({ etablissement, currentMentionId }: MentionDetailsProps) => {
     const [searchQuery, setSearchQuery] = useState("");
+    const [selectedFaculte, setSelectedFaculte] = useState<Faculte | null>(null);
 
     const currentMention = etablissement.mentions?.find(m => m._id === currentMentionId);
 
@@ -20,6 +22,23 @@ const MentionDetails = ({ etablissement, currentMentionId }: MentionDetailsProps
         f.designation.toLowerCase().includes(searchQuery.toLowerCase())
     ) || [];
 
+    // Reset selection when mention changes
+    useEffect(() => {
+        setSelectedFaculte(null);
+        setSearchQuery("");
+    }, [currentMentionId]);
+
+    // If a faculty is selected, show detail view
+    if (selectedFaculte) {
+        return (
+            <FaculteDetail
+                faculte={selectedFaculte}
+                onBack={() => setSelectedFaculte(null)}
+            />
+        );
+    }
+
+    // Default view: Search + Grid
     return (
         <>
             {/* Header & Search */}
@@ -70,33 +89,11 @@ const MentionDetails = ({ etablissement, currentMentionId }: MentionDetailsProps
             {currentMentionId ? (
                 <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
                     {filteredFacultes.map((faculte) => (
-                        <motion.div
+                        <FaculteCard
                             key={faculte._id}
-                            variants={{ hidden: { opacity: 0, y: -10 }, visible: { opacity: 1, y: 0 } }}
-                            initial="hidden"
-                            whileInView="visible"
-                            transition={{ duration: 0.5 }}
-                            viewport={{ once: true }}
-                            className="animate_top group rounded-lg bg-white p-4 pb-9 shadow-solid-8 dark:bg-blacksection border border-transparent hover:border-primary/20 dark:hover:border-primary/20 transition-all"
-                        >
-                            <div className="relative mb-4 block aspect-[3/2] overflow-hidden rounded-lg bg-gray-100 dark:bg-meta-4">
-                                {faculte.couverture ? (
-                                    <Image src={faculte.couverture} alt={faculte.designation} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
-                                ) : (
-                                    <div className="flex h-full w-full items-center justify-center">
-                                        <svg className="h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                                    </div>
-                                )}
-                            </div>
-                            <div className="px-2">
-                                <h3 className="mb-3 text-lg font-bold text-black duration-300 group-hover:text-primary dark:text-white dark:group-hover:text-primary">
-                                    {faculte.designation}
-                                </h3>
-                                <p className="line-clamp-3 text-sm text-body-color dark:text-body-color-dark">
-                                    {faculte.description?.[0] || "Aucune description disponible"}
-                                </p>
-                            </div>
-                        </motion.div>
+                            faculte={faculte}
+                            onClick={() => setSelectedFaculte(faculte)}
+                        />
                     ))}
 
                     {filteredFacultes.length === 0 && (

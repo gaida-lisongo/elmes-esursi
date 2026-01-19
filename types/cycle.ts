@@ -35,14 +35,14 @@ export interface Faculte {
     _id: string;
     designation: string;
     description: string[];
-    programmes: any[];
+    programmes?: Programme[];
     mention: string;
     couverture: string;
-    equipe: {
+    equipe?: {
         agent: Agent;
         fonction: string;
     }[];
-    actualites: {
+    actualites?: {
         _id: string;
         titre: string;
         sousTitre: string;
@@ -50,7 +50,11 @@ export interface Faculte {
         photo: string;
         isActif: boolean;
     }[];
-    filieres: string[];
+    filieres?: {
+        title: string;
+        description: string;
+        token: string;
+    }[];
     createdAt: string;
     updatedAt: string;
     __v: number;
