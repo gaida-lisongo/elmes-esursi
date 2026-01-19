@@ -144,8 +144,14 @@ const FaculteDetail = ({ faculte, mentionId, onBack, isEditing }: FaculteDetailP
 
             {/* Loading Overlay */}
             {loading && (
-                <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/50 backdrop-blur-sm">
-                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-white border-t-primary"></div>
+                <div className="fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-black/60 backdrop-blur-md">
+                    <div className="relative h-16 w-16">
+                        <div className="absolute inset-0 rounded-full border-4 border-white/20"></div>
+                        <div className="absolute inset-0 animate-spin rounded-full border-4 border-t-primary border-transparent"></div>
+                    </div>
+                    <p className="mt-4 font-medium text-white animate-pulse">
+                        Mise à jour en cours...
+                    </p>
                 </div>
             )}
         </div>
