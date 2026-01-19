@@ -1,36 +1,36 @@
 "use client";
 import Link from "next/link";
 
-const SidebarLink = () => {
+type SideBarLinkProps = {
+  data: {
+    title: string;
+    id: string;
+    onClick: () => void;
+    isCurrent: boolean;
+  }[]
+}
+
+const SidebarLink = ({ data }: SideBarLinkProps) => {
   return (
-    <>
-      <li className="block">
-        <Link
-          href={`/docs`}
-          className={`flex w-full rounded-xs bg-stroke px-3 py-2 text-base text-black dark:bg-blackho dark:text-white`}
-        >
-          Introduction
-        </Link>
-        <Link
-          href={`/docs`}
-          className={`flex w-full rounded-xs px-3 py-2 text-base text-black dark:text-white `}
-        >
-          Bootstrap Template Guide
-        </Link>
-        <Link
-          href={`/docs`}
-          className={`flex w-full rounded-xs px-3 py-2 text-base text-black dark:text-white `}
-        >
-          Style Guide
-        </Link>
-        <Link
-          href={`/docs`}
-          className={`flex w-full rounded-xs px-3 py-2 text-base text-black dark:text-white `}
-        >
-          Using Tailwind Components
-        </Link>
-      </li>
-    </>
+    <ul className="space-y-2">
+      {data.map((item) => (
+        <li key={item.id} className="block">
+          <button
+            onClick={item.onClick}
+            className={`group relative flex w-full items-center justify-between px-4 py-3 text-left text-base font-medium transition-all duration-300 ease-in-out ${item.isCurrent
+                ? "bg-transparent text-primary dark:text-primary"
+                : "text-body-color hover:text-primary dark:text-body-color-dark dark:hover:text-white"
+              }`}
+          >
+            {item.title}
+            <span
+              className={`absolute bottom-0 left-0 h-[2px] bg-primary transition-all duration-300 ease-in-out ${item.isCurrent ? "w-full" : "w-0 group-hover:w-full"
+                }`}
+            ></span>
+          </button>
+        </li>
+      ))}
+    </ul>
   );
 };
 
