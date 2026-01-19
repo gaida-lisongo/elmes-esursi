@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Faculte } from "@/types/cycle";
 import SectionHeader from "@/components/Common/SectionHeader";
 import FiliereModal from "./FiliereModal";
+import FaculteAboutModal from "./FaculteAboutModal";
 
 interface AboutFaculteProps {
     faculte: Faculte;
@@ -84,21 +85,11 @@ const SingleFiliere = ({
 
 const AboutFaculte = ({ faculte, isEditing, onUpdate }: AboutFaculteProps) => {
     const [isFiliereModalOpen, setIsFiliereModalOpen] = useState(false);
+    const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
     const [editingFiliere, setEditingFiliere] = useState<{ title: string; description: string; token: string } | undefined>(undefined);
 
-    const handleEditDesignation = () => {
-        const newValue = window.prompt("Modifier la désignation", faculte.designation);
-        if (newValue !== null && newValue !== faculte.designation) {
-            onUpdate?.({ designation: newValue });
-        }
-    };
-
-    const handleEditDescription = () => {
-        const newValue = window.prompt("Modifier la description", faculte.description?.join("\n"));
-        if (newValue !== null) {
-            const newArray = newValue.split("\n").filter(line => line.trim() !== "");
-            onUpdate?.({ description: newArray });
-        }
+    const handleAboutSubmit = (data: { designation: string; description: string[] }) => {
+        onUpdate?.({ designation: data.designation, description: data.description });
     };
 
     const handleAddFiliere = () => {
@@ -150,16 +141,10 @@ const AboutFaculte = ({ faculte, isEditing, onUpdate }: AboutFaculteProps) => {
                             {isEditing && (
                                 <div className="flex flex-wrap gap-3">
                                     <button
-                                        onClick={handleEditDesignation}
+                                        onClick={() => setIsAboutModalOpen(true)}
                                         className="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-2.5 text-sm font-semibold text-black hover:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 transition-all"
                                     >
-                                        ✏️ Modifier Titre
-                                    </button>
-                                    <button
-                                        onClick={handleEditDescription}
-                                        className="inline-flex items-center gap-2 rounded-lg bg-gray-100 px-5 py-2.5 text-sm font-semibold text-black hover:bg-gray-200 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 transition-all"
-                                    >
-                                        📝 Description
+                                        ⚙️ Modifier Infos
                                     </button>
                                     <button
                                         onClick={handleAddFiliere}
@@ -217,9 +202,18 @@ const AboutFaculte = ({ faculte, isEditing, onUpdate }: AboutFaculteProps) => {
                 onSubmit={handleFiliereSubmit}
                 initialData={editingFiliere}
             />
+
+            <FaculteAboutModal
+                isOpen={isAboutModalOpen}
+                onClose={() => setIsAboutModalOpen(false)}
+                onSubmit={handleAboutSubmit}
+                initialData={{
+                    designation: faculte.designation,
+                    description: faculte.description || []
+                }}
+            />
         </section>
     );
 };
 
 export default AboutFaculte;
-
