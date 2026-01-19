@@ -49,6 +49,7 @@ const EtablissementLayout = ({ etablissement }: EtablissementLayoutProps) => {
                 etablissement={etablissement}
                 currentMentionId={currentMentionId}
                 onMentionSelect={setCurrentMentionId}
+                isEditing={isEditing}
             />
 
             {isEditing && (

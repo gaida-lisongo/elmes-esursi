@@ -51,3 +51,29 @@ export async function authenticateModerator({ agentId, secureKey, role, etabId }
         return { success: false, error: "Network or server error" };
     }
 }
+
+export async function updateEtab({ url, token, payload }: { url: string, token: string, payload: any }) {
+    try {
+        const req = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
+            },
+            body: JSON.stringify(payload),
+        });
+
+        const res = await req.json();
+
+        if (res.success) {
+            return { success: true, data: res.data };
+        }
+
+        return { success: false, error: "Failed to update" };
+    } catch (error) {
+        console.error("Failed to update:", error);
+        return { success: false, error: "Network or server error" };
+    }
+}
+
+
