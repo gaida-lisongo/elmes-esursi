@@ -1,18 +1,27 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Faculte, Domaine } from "@/types/cycle";
 import { IEtablissementWithMentions } from "./EtablissementDetails";
 import FaculteCard from "./FaculteCard";
 import FaculteDetail from "./FaculteDetail";
+import FaculteModal from "./FaculteModal";
+import { createFaculte, deleteFaculte } from "@/app/actions/faculte";
+import { useRouter } from "next/navigation";
 
 interface MentionDetailsProps {
     etablissement: IEtablissementWithMentions;
     currentMentionId: string;
+    isEditing?: boolean;
 }
 
-const MentionDetails = ({ etablissement, currentMentionId }: MentionDetailsProps) => {
+const MentionDetails = ({ etablissement, currentMentionId, isEditing }: MentionDetailsProps) => {
+    const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedFaculte, setSelectedFaculte] = useState<Faculte | null>(null);
+    const [isFaculteModalOpen, setIsFaculteModalOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const currentMention = etablissement.mentions?.find(m => m._id === currentMentionId);
 
@@ -28,12 +37,72 @@ const MentionDetails = ({ etablissement, currentMentionId }: MentionDetailsProps
         setSearchQuery("");
     }, [currentMentionId]);
 
+    const handleAddFaculte = () => {
+        setIsFaculteModalOpen(true);
+    };
+
+    const handleFaculteSubmit = async (data: { designation: string; code: string; description: string[]; couverture?: string }) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Non authentifié");
+            return;
+        }
+
+        setLoading(true);
+
+        const res = await createFaculte({
+            mentionId: currentMentionId,
+            designation: data.designation,
+            code: data.code,
+            description: data.description,
+            couverture: data.couverture,
+            token,
+        });
+
+        if (res.success) {
+            router.refresh();
+        } else {
+            alert(res.error || "Erreur lors de la création");
+        }
+
+        setLoading(false);
+        setIsFaculteModalOpen(false);
+    };
+
+    const handleDeleteFaculte = async (faculteId: string) => {
+        if (!confirm("Supprimer cette faculté ?")) return;
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Non authentifié");
+            return;
+        }
+
+        setLoading(true);
+
+        const res = await deleteFaculte({
+            mentionId: currentMentionId,
+            faculteId,
+            token,
+        });
+
+        if (res.success) {
+            router.refresh();
+        } else {
+            alert(res.error || "Erreur lors de la suppression");
+        }
+
+        setLoading(false);
+    };
+
     // If a faculty is selected, show detail view
     if (selectedFaculte) {
         return (
             <FaculteDetail
                 faculte={selectedFaculte}
+                mentionId={currentMentionId}
                 onBack={() => setSelectedFaculte(null)}
+                isEditing={isEditing}
             />
         );
     }
@@ -51,8 +120,8 @@ const MentionDetails = ({ etablissement, currentMentionId }: MentionDetailsProps
                         {currentMention ? "Facultés disponibles dans cette mention" : "Sélectionnez une mention pour voir les détails"}
                     </p>
                 </div>
-                <div className="w-full md:w-1/2">
-                    <div className="relative">
+                <div className="w-full md:w-1/2 flex gap-3 items-center">
+                    <div className="relative flex-1">
                         <input
                             type="text"
                             placeholder="Rechercher une faculté..."
@@ -82,6 +151,19 @@ const MentionDetails = ({ etablissement, currentMentionId }: MentionDetailsProps
                             />
                         </svg>
                     </div>
+
+                    {/* Add Faculty Button */}
+                    {isEditing && currentMentionId && (
+                        <button
+                            onClick={handleAddFaculte}
+                            className="flex items-center gap-2 rounded-full bg-primary px-4 py-3 text-sm font-medium text-white hover:bg-primary/90 transition-colors shrink-0"
+                        >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                            </svg>
+                            Ajouter
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -89,17 +171,35 @@ const MentionDetails = ({ etablissement, currentMentionId }: MentionDetailsProps
             {currentMentionId ? (
                 <div className="grid grid-cols-1 gap-7.5 md:grid-cols-2">
                     {filteredFacultes.map((faculte) => (
-                        <FaculteCard
-                            key={faculte._id}
-                            faculte={faculte}
-                            onClick={() => setSelectedFaculte(faculte)}
-                        />
+                        <div key={faculte._id} className="relative group">
+                            <FaculteCard
+                                faculte={faculte}
+                                onClick={() => setSelectedFaculte(faculte)}
+                            />
+                            {/* Delete button overlay */}
+                            {isEditing && (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteFaculte(faculte._id);
+                                    }}
+                                    className="absolute top-6 right-6 z-10 rounded-full bg-red-500 p-2 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                    title="Supprimer cette faculté"
+                                >
+                                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
                     ))}
 
                     {filteredFacultes.length === 0 && (
                         <div className="col-span-1 md:col-span-2 text-center py-12 bg-white dark:bg-blacksection rounded-lg border border-stroke dark:border-strokedark">
                             <h4 className="text-black dark:text-white font-medium mb-2">Aucune faculté trouvée</h4>
-                            <p className="text-body-color text-sm">Essayez une autre recherche.</p>
+                            <p className="text-body-color text-sm">
+                                {isEditing ? "Cliquez sur « Ajouter » pour créer une faculté." : "Essayez une autre recherche."}
+                            </p>
                         </div>
                     )}
                 </div>
@@ -109,6 +209,20 @@ const MentionDetails = ({ etablissement, currentMentionId }: MentionDetailsProps
                     <p className="text-body-color dark:text-body-color-dark">dans le menu de gauche pour voir les détails</p>
                 </div>
             )}
+
+            {/* Loading overlay */}
+            {loading && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+                    <div className="h-10 w-10 animate-spin rounded-full border-4 border-white border-t-primary"></div>
+                </div>
+            )}
+
+            {/* Faculte Modal */}
+            <FaculteModal
+                isOpen={isFaculteModalOpen}
+                onClose={() => setIsFaculteModalOpen(false)}
+                onSubmit={handleFaculteSubmit}
+            />
         </>
     );
 };

@@ -5,7 +5,7 @@ import { uploadPhoto } from "@/app/actions/photo";
 import Moderator from "@/app/lib/Moderator";
 import { useRouter } from "next/navigation";
 import MentionModal from "./MentionModal";
-import { createMention, updateMention, deleteMention } from "@/app/actions/mention";
+import { createMention, deleteMention } from "@/app/actions/mention";
 
 interface EtabHeaderProps {
     etablissement: IEtablissementWithMentions;
@@ -22,7 +22,6 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
 
     // Mention modal state
     const [isMentionModalOpen, setIsMentionModalOpen] = useState(false);
-    const [editingMention, setEditingMention] = useState<{ _id: string; designation: string; domaineId?: string } | null>(null);
 
     const backgroundImage = etablissement.photo && etablissement.photo[0]
         ? etablissement.photo[0]
@@ -79,16 +78,6 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
 
     // Mention handlers
     const handleAddMention = () => {
-        setEditingMention(null);
-        setIsMentionModalOpen(true);
-    };
-
-    const handleEditMention = (mention: { _id: string; designation: string; domaine?: { _id: string } }) => {
-        setEditingMention({
-            _id: mention._id,
-            designation: mention.designation,
-            domaineId: mention.domaine?._id,
-        });
         setIsMentionModalOpen(true);
     };
 
@@ -101,41 +90,24 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
 
         setUploading(true);
 
-        if (editingMention) {
-            const res = await updateMention({
-                mentionId: editingMention._id,
-                designation: data.designation,
-                domaine: data.domaineId,
-                token,
-            });
+        const res = await createMention({
+            etablissement: etablissement._id,
+            domaine: data.domaineId,
+            designation: data.designation,
+            token,
+        });
 
-            if (res.success) {
-                router.refresh();
-            } else {
-                alert(res.error || "Erreur lors de la mise à jour");
-            }
+        if (res.success) {
+            router.refresh();
         } else {
-            const res = await createMention({
-                etablissement: etablissement._id,
-                domaine: data.domaineId,
-                designation: data.designation,
-                token,
-            });
-
-            if (res.success) {
-                router.refresh();
-            } else {
-                alert(res.error || "Erreur lors de la création");
-            }
+            alert(res.error || "Erreur lors de la création");
         }
 
         setUploading(false);
         setIsMentionModalOpen(false);
     };
 
-    const handleDeleteMention = async () => {
-        if (!editingMention) return;
-
+    const handleDeleteMentionDirect = async (mentionId: string) => {
         if (!confirm("Supprimer cette mention ?")) return;
 
         const token = localStorage.getItem("token");
@@ -147,7 +119,7 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
         setUploading(true);
 
         const res = await deleteMention({
-            mentionId: editingMention._id,
+            mentionId,
             token,
         });
 
@@ -158,7 +130,6 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
         }
 
         setUploading(false);
-        setIsMentionModalOpen(false);
     };
 
     return (
@@ -266,12 +237,12 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
                                 </button>
                                 {isEditing && (
                                     <button
-                                        onClick={() => handleEditMention(mention)}
-                                        className="ml-1 text-gray-400 hover:text-primary"
-                                        title="Modifier cette mention"
+                                        onClick={() => handleDeleteMentionDirect(mention._id)}
+                                        className="ml-1 text-red-400 hover:text-red-500"
+                                        title="Supprimer cette mention"
                                     >
                                         <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                         </svg>
                                     </button>
                                 )}
@@ -309,9 +280,6 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
                 isOpen={isMentionModalOpen}
                 onClose={() => setIsMentionModalOpen(false)}
                 onSubmit={handleMentionSubmit}
-                onDelete={editingMention ? handleDeleteMention : undefined}
-                initialData={editingMention ? { designation: editingMention.designation, domaineId: editingMention.domaineId } : undefined}
-                isEditing={!!editingMention}
             />
         </div>
     );

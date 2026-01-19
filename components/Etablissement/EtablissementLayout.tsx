@@ -91,6 +91,7 @@ const EtablissementLayout = ({ etablissement }: EtablissementLayoutProps) => {
                             <MentionDetails
                                 etablissement={etablissement}
                                 currentMentionId={currentMentionId}
+                                isEditing={isEditing}
                             />
                         </div>
                     </div>

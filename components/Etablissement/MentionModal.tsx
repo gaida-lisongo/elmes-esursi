@@ -15,17 +15,25 @@ interface MentionModalProps {
 const MentionModal = ({ isOpen, onClose, onSubmit, onDelete, initialData, isEditing }: MentionModalProps) => {
     const [domaines, setDomaines] = useState<Domaine[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedDomaine, setSelectedDomaine] = useState(initialData?.domaineId || "");
-    const [designation, setDesignation] = useState(initialData?.designation || "");
+    const [selectedDomaine, setSelectedDomaine] = useState("");
+    const [designation, setDesignation] = useState("");
     const [error, setError] = useState("");
 
+    // Reset form and fetch domains when modal opens
     useEffect(() => {
         if (isOpen) {
+            // Reset form with initial data
+            setDesignation(initialData?.designation || "");
+            setSelectedDomaine(initialData?.domaineId || "");
+            setError("");
+
+            // Fetch domains
             setLoading(true);
             fetchDomaines().then((res) => {
                 if (res.success) {
                     setDomaines(res.domaines);
-                    if (!selectedDomaine && res.domaines.length > 0) {
+                    // Set default domain if none selected
+                    if (!initialData?.domaineId && res.domaines.length > 0) {
                         setSelectedDomaine(res.domaines[0]._id);
                     }
                 } else {
@@ -34,14 +42,7 @@ const MentionModal = ({ isOpen, onClose, onSubmit, onDelete, initialData, isEdit
                 setLoading(false);
             });
         }
-    }, [isOpen]);
-
-    useEffect(() => {
-        if (initialData) {
-            setDesignation(initialData.designation || "");
-            setSelectedDomaine(initialData.domaineId || "");
-        }
-    }, [initialData]);
+    }, [isOpen, initialData?.designation, initialData?.domaineId]);
 
     if (!isOpen) return null;
 
