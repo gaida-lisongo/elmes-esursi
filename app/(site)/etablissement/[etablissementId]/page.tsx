@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Metadata } from "next";
 import EtablissementDetails, { IEtablissementWithMentions } from "@/components/Etablissement/EtablissementDetails";
+import { Agent } from "@/types/user";
 
 export const metadata: Metadata = {
     title: "Détails de l'établissement",
@@ -17,7 +18,15 @@ const getEtablissement = async (id: string): Promise<IEtablissementWithMentions 
 
         const rep = await res.json();
 
-        if (rep.success) return rep.data;
+        if (rep.success) {
+            //Erase autorisation in agent coge
+            const { coge, ...etab } = rep.data;
+            const pureCoge = coge.map(({ fonction, agent }: { fonction: string, agent: Agent }) => {
+                const { autorisation, ...agentWithoutAutorisation } = agent;
+                return { fonction, agent: agentWithoutAutorisation };
+            });
+            return { ...etab, coge: pureCoge };
+        };
         return null;
     } catch (error) {
         console.error("Failed to fetch etablissement:", error);

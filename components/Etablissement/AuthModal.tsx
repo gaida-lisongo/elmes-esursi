@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { Agent } from "@/types/user";
+import Moderator from "@/app/lib/Moderator";
 
 interface AuthModalProps {
     isOpen: boolean;
     onClose: () => void;
     agent?: Agent;
+    role?: string;
+    etabId: string;
+    onLoginSuccess: () => void;
 }
 
-const AuthModal = ({ isOpen, onClose, agent }: AuthModalProps) => {
+const AuthModal = ({ isOpen, onClose, agent, role, etabId, onLoginSuccess }: AuthModalProps) => {
     const [secureKey, setSecureKey] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -19,16 +23,34 @@ const AuthModal = ({ isOpen, onClose, agent }: AuthModalProps) => {
         setLoading(true);
         setError("");
 
-        // Simulate API call for now or implement actual authentication
-        setTimeout(() => {
-            // Check logic here against agent's keys or backend
-            console.log("Authenticating with key:", secureKey, "for agent:", agent?.nom);
+        if (!agent) {
+            setError("Erreur interne: Agent non identifié");
             setLoading(false);
-            // On success:
-            // onClose();
-            // On error:
-            // setError("Clé de sécurité invalide");
-        }, 1000);
+            return;
+        }
+
+        try {
+            const moderator = new Moderator({
+                agentId: agent._id,
+                secureKey: secureKey,
+                role: role || "",
+                etabId: etabId
+            });
+
+            const success = await moderator.login();
+
+            if (success) {
+                setLoading(false);
+                onLoginSuccess();
+            } else {
+                setError("Clé de sécurité invalide ou erreur de connexion");
+                setLoading(false);
+            }
+        } catch (err) {
+            console.error(err);
+            setError("Une erreur est survenue");
+            setLoading(false);
+        }
     };
 
     return (

@@ -1,4 +1,5 @@
 export interface Agent {
+    _id: string;
     nom: string;
     postNom: string;
     prenom: string;
