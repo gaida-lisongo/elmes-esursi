@@ -79,12 +79,12 @@ const EtabSidebar = ({ etablissement, onLoginClick }: EtabSidebarProps) => {
                                         <h4 className="truncate text-sm font-bold text-black dark:text-white">
                                             {membre.agent?.prenom} {membre.agent?.nom}
                                         </h4>
-                                        <p className="truncate text-xs text-body-color">{membre.fonction}</p>
+                                        <p className="truncate text-xs text-body-color dark:text-body-color-dark">{membre.fonction}</p>
                                     </div>
                                 </div>
                                 <button
                                     onClick={() => onLoginClick(membre)}
-                                    className="w-full rounded-md bg-gray-100 py-2 text-xs font-semibold text-black hover:bg-gray-200 dark:bg-meta-4 dark:text-white dark:hover:bg-opacity-90 transition-colors"
+                                    className="w-full rounded-md bg-gray-100 py-2 text-xs font-semibold text-black hover:bg-gray-200 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 transition-colors"
                                 >
                                     Se connecter
                                 </button>

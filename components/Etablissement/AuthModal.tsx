@@ -49,13 +49,13 @@ const AuthModal = ({ isOpen, onClose, agent }: AuthModalProps) => {
                 </div>
 
                 {agent && (
-                    <div className="mb-6 flex items-center gap-4 rounded-lg bg-gray-50 p-4 dark:bg-meta-4">
+                    <div className="mb-6 flex items-center gap-4 rounded-lg bg-gray-50 p-4 dark:bg-black/20 dark:border dark:border-strokedark">
                         <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-xl font-bold text-primary">
                             {agent.nom?.[0]}
                         </div>
                         <div>
                             <p className="font-semibold text-black dark:text-white">{agent.prenom} {agent.nom}</p>
-                            <p className="text-xs text-body-color">Veuillez confirmer votre identité</p>
+                            <p className="text-xs text-body-color dark:text-body-color-dark">Veuillez confirmer votre identité</p>
                         </div>
                     </div>
                 )}
