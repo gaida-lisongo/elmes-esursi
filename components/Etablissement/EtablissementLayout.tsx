@@ -82,6 +82,7 @@ const EtablissementLayout = ({ etablissement }: EtablissementLayoutProps) => {
                             <EtabSidebar
                                 etablissement={etablissement}
                                 onLoginClick={handleLoginClick}
+                                isEditing={isEditing}
                             />
                         </div>
 

@@ -17,7 +17,7 @@ export async function uploadPhoto(formData: FormData) {
 
         const data = new FormData();
         data.append("file", file);
-        data.append("upload_preset", "esursi"); // Assuming this is the preset
+        data.append("upload_preset", "ml_default"); // Using default unsigned preset
         data.append("folder", "esursi");
 
         const result = await fetch(cloudinaryUrl, {

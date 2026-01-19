@@ -30,14 +30,14 @@ const AuthModal = ({ isOpen, onClose, agent, role, etabId, onLoginSuccess }: Aut
         }
 
         try {
-            const moderator = new Moderator({
+            const moderator = Moderator.getInstance();
+
+            const success = await moderator.login({
                 agentId: agent._id,
                 secureKey: secureKey,
                 role: role || "",
                 etabId: etabId
             });
-
-            const success = await moderator.login();
 
             if (success) {
                 setLoading(false);
