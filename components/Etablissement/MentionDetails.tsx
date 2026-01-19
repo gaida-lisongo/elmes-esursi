@@ -19,11 +19,14 @@ interface MentionDetailsProps {
 const MentionDetails = ({ etablissement, currentMentionId, isEditing }: MentionDetailsProps) => {
     const router = useRouter();
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedFaculte, setSelectedFaculte] = useState<Faculte | null>(null);
+    const [selectedFaculteId, setSelectedFaculteId] = useState<string | null>(null);
     const [isFaculteModalOpen, setIsFaculteModalOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const currentMention = etablissement.mentions?.find(m => m._id === currentMentionId);
+
+    // Find selected faculty in the fresh props
+    const selectedFaculte = currentMention?.facultes.find(f => f._id === selectedFaculteId);
 
     // Sort facultes by designation or any other criteria if needed
     // Filter by search query
@@ -33,7 +36,7 @@ const MentionDetails = ({ etablissement, currentMentionId, isEditing }: MentionD
 
     // Reset selection when mention changes
     useEffect(() => {
-        setSelectedFaculte(null);
+        setSelectedFaculteId(null);
         setSearchQuery("");
     }, [currentMentionId]);
 
@@ -101,7 +104,7 @@ const MentionDetails = ({ etablissement, currentMentionId, isEditing }: MentionD
             <FaculteDetail
                 faculte={selectedFaculte}
                 mentionId={currentMentionId}
-                onBack={() => setSelectedFaculte(null)}
+                onBack={() => setSelectedFaculteId(null)}
                 isEditing={isEditing}
             />
         );
@@ -174,7 +177,7 @@ const MentionDetails = ({ etablissement, currentMentionId, isEditing }: MentionD
                         <div key={faculte._id} className="relative group">
                             <FaculteCard
                                 faculte={faculte}
-                                onClick={() => setSelectedFaculte(faculte)}
+                                onClick={() => setSelectedFaculteId(faculte._id)}
                             />
                             {/* Delete button overlay */}
                             {isEditing && (
