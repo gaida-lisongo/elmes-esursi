@@ -1,5 +1,7 @@
 "use server";
 
+import { IEtablissement } from "@/components/Hero/types";
+
 export interface Domaine {
     _id: string;
     designation: string;
@@ -16,6 +18,13 @@ export interface Domaine {
 export interface DomainesResponse {
     success: boolean;
     domaines: Domaine[];
+}
+
+export interface Mention {
+    _id: string;
+    designation: string;
+    etablissement: IEtablissement;
+    domaine: Domaine;
 }
 
 export async function fetchDomaines(): Promise<{ success: boolean; domaines: Domaine[]; error?: string }> {
@@ -38,6 +47,29 @@ export async function fetchDomaines(): Promise<{ success: boolean; domaines: Dom
     } catch (error) {
         console.error("Error fetching domaines:", error);
         return { success: false, domaines: [], error: "Erreur réseau" };
+    }
+}
+
+export async function fetchMentions(critere: { key: string; value: string }): Promise<{ success: boolean; mentions: Mention[]; error?: string }> {
+    try {
+        const response = await fetch(`https://esursi-app.vercel.app/api/mentions?${critere.key}=${critere.value}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            cache: "no-store",
+        });
+
+        const data: { success: boolean; mentions: Mention[]; error?: string } = await response.json();
+
+        if (data.success) {
+            return data;
+        }
+
+        return { success: false, mentions: [], error: "Échec de la récupération des mentions" };
+    } catch (error) {
+        console.error("Error fetching mentions:", error);
+        return { success: false, mentions: [], error: "Erreur réseau" };
     }
 }
 

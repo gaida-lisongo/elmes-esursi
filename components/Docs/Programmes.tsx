@@ -3,6 +3,7 @@
 import { Domaine, Programme } from "@/types/cycle";
 import SidebarLink from "./SidebarLink";
 import { useEffect, useState } from "react";
+import { fetchMentions, Mention } from "@/app/actions/mention";
 
 const Programmes = ({ data, domaines }: { data: Programme[], domaines: Domaine[] }) => {
     const [currentTab, setCurrentTab] = useState<string>(data[0]?._id);
@@ -13,12 +14,32 @@ const Programmes = ({ data, domaines }: { data: Programme[], domaines: Domaine[]
     // Modal state
     const [showMentionsModal, setShowMentionsModal] = useState(false);
     const [mentionsDomaine, setMentionsDomaine] = useState<Domaine | null>(null);
+    const [mentions, setMentions] = useState<Mention[]>([]);
 
     const currentProgramme = data.find((item) => item._id === currentTab);
 
     const filteredDomaines = domaines.filter((domaine) =>
         domaine.designation.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
+    const fetchMentionsByCurrentDomaine = async () => {
+        try {
+            const resp = await fetchMentions({ key: "domaine", value: selectedDomaine?._id || "" });
+            if (resp.success) {
+                console.log("Mentions fetching : ", resp.mentions)
+                setMentions(resp.mentions);
+            }
+
+        } catch (error) {
+            console.error("Erro when fetching mentions :", error)
+        }
+    };
+
+    useEffect(() => {
+        if (selectedDomaine) {
+            fetchMentionsByCurrentDomaine();
+        }
+    }, [selectedDomaine]);
 
     const handleDomaineSelect = (domaine: Domaine) => {
         setSelectedDomaine(domaine);
