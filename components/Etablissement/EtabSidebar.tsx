@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { IEtablissementWithMentions } from "./EtablissementDetails";
 import Image from "next/image";
 import { Agent } from "@/types/user";
 import Moderator from "@/app/lib/Moderator";
 import { useRouter } from "next/navigation";
+import NrefModal from "./NrefModal";
 
 interface EtabSidebarProps {
     etablissement: IEtablissementWithMentions;
@@ -12,6 +14,9 @@ interface EtabSidebarProps {
 
 const EtabSidebar = ({ etablissement, onLoginClick, isEditing }: EtabSidebarProps) => {
     const router = useRouter();
+    const [isNrefModalOpen, setIsNrefModalOpen] = useState(false);
+    const [editingNrefIndex, setEditingNrefIndex] = useState<number | null>(null);
+    const [nrefInitialData, setNrefInitialData] = useState<{ type?: string, reference?: string, date?: string } | undefined>(undefined);
 
     const updateDescription = async (newDescription: string[]) => {
         const moderator = Moderator.getInstance();
@@ -45,33 +50,41 @@ const EtabSidebar = ({ etablissement, onLoginClick, isEditing }: EtabSidebarProp
         }
     };
 
-    const updateNref = async (newNref: string[]) => {
+    const updateNref = async (newNref: any[]) => {
         const moderator = Moderator.getInstance();
-        const success = await moderator.updateEtab({ nref: newNref });
+        const success = await moderator.updateEtab({ nRef: newNref });
         if (success) router.refresh();
         else alert("Erreur lors de la mise à jour");
     };
 
-    const handleAddNref = async () => {
-        const text = window.prompt("Ajouter une référence (Arrêté) :");
-        if (text) {
-            const newNref = [...(etablissement.nref || []), text];
-            await updateNref(newNref);
-        }
+    const handleAddNref = () => {
+        setEditingNrefIndex(null);
+        setNrefInitialData(undefined);
+        setIsNrefModalOpen(true);
     };
 
-    const handleEditNref = async (index: number, currentText: string) => {
-        const text = window.prompt("Modifier la référence :", currentText);
-        if (text !== null && text !== currentText) {
-            const newNref = [...(etablissement.nref || [])];
-            newNref[index] = text;
-            await updateNref(newNref);
+    const handleEditNref = (index: number, item: { document: string, reference: string, date: string }) => {
+        setEditingNrefIndex(index);
+        setNrefInitialData({ type: item.document, reference: item.reference, date: item.date });
+        setIsNrefModalOpen(true);
+    };
+
+    const handleNrefSubmit = async (data: { type: string, reference: string, date: string }) => {
+        const newItem = { document: data.type, reference: data.reference, date: data.date };
+        const newNref = [...(etablissement.nRef || [])];
+
+        if (editingNrefIndex !== null) {
+            newNref[editingNrefIndex] = newItem;
+        } else {
+            newNref.push(newItem);
         }
+
+        await updateNref(newNref);
     };
 
     const handleRemoveNref = async (index: number) => {
         if (confirm("Supprimer cette référence ?")) {
-            const newNref = [...(etablissement.nref || [])];
+            const newNref = [...(etablissement.nRef || [])];
             newNref.splice(index, 1);
             await updateNref(newNref);
         }
@@ -139,11 +152,11 @@ const EtabSidebar = ({ etablissement, onLoginClick, isEditing }: EtabSidebarProp
                         )}
                     </div>
                     <div className="space-y-2">
-                        {etablissement.nref && etablissement.nref.length > 0 ? (
-                            etablissement.nref.map((ref, idx) => (
+                        {etablissement.nRef && etablissement.nRef.length > 0 ? (
+                            etablissement.nRef.map((ref, idx) => (
                                 <div key={idx} className="relative flex items-center justify-between gap-2">
                                     <p className="text-sm text-body-color dark:text-body-color-dark">
-                                        • {ref}
+                                        • {ref.document} n° {ref.reference} du {ref.date}
                                     </p>
                                     {isEditing && (
                                         <div className="flex gap-2 shrink-0">
@@ -259,6 +272,13 @@ const EtabSidebar = ({ etablissement, onLoginClick, isEditing }: EtabSidebarProp
                     </div>
                 </div>
             )}
+
+            <NrefModal
+                isOpen={isNrefModalOpen}
+                onClose={() => setIsNrefModalOpen(false)}
+                onSubmit={handleNrefSubmit}
+                initialData={nrefInitialData}
+            />
         </div>
     );
 };
