@@ -4,6 +4,8 @@ import { IEtablissementWithMentions } from "./EtablissementDetails";
 import { uploadPhoto } from "@/app/actions/photo";
 import Moderator from "@/app/lib/Moderator";
 import { useRouter } from "next/navigation";
+import MentionModal from "./MentionModal";
+import { createMention, updateMention, deleteMention } from "@/app/actions/mention";
 
 interface EtabHeaderProps {
     etablissement: IEtablissementWithMentions;
@@ -17,6 +19,10 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
     const bannerInputRef = useRef<HTMLInputElement>(null);
     const logoInputRef = useRef<HTMLInputElement>(null);
     const [uploading, setUploading] = useState(false);
+
+    // Mention modal state
+    const [isMentionModalOpen, setIsMentionModalOpen] = useState(false);
+    const [editingMention, setEditingMention] = useState<{ _id: string; designation: string; domaineId?: string } | null>(null);
 
     const backgroundImage = etablissement.photo && etablissement.photo[0]
         ? etablissement.photo[0]
@@ -40,7 +46,6 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
             const newPhotoArray = [...(etablissement.photo || [])];
             if (type === 'banner') newPhotoArray[0] = uploadRes.url;
             if (type === 'logo') {
-                // Ensure index 0 exists
                 if (!newPhotoArray[0]) newPhotoArray[0] = backgroundImage;
                 newPhotoArray[1] = uploadRes.url;
             }
@@ -70,6 +75,90 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
                 alert("Erreur lors de la mise à jour");
             }
         }
+    };
+
+    // Mention handlers
+    const handleAddMention = () => {
+        setEditingMention(null);
+        setIsMentionModalOpen(true);
+    };
+
+    const handleEditMention = (mention: { _id: string; designation: string; domaine?: { _id: string } }) => {
+        setEditingMention({
+            _id: mention._id,
+            designation: mention.designation,
+            domaineId: mention.domaine?._id,
+        });
+        setIsMentionModalOpen(true);
+    };
+
+    const handleMentionSubmit = async (data: { domaineId: string; designation: string }) => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Non authentifié");
+            return;
+        }
+
+        setUploading(true);
+
+        if (editingMention) {
+            const res = await updateMention({
+                mentionId: editingMention._id,
+                designation: data.designation,
+                domaine: data.domaineId,
+                token,
+            });
+
+            if (res.success) {
+                router.refresh();
+            } else {
+                alert(res.error || "Erreur lors de la mise à jour");
+            }
+        } else {
+            const res = await createMention({
+                etablissement: etablissement._id,
+                domaine: data.domaineId,
+                designation: data.designation,
+                token,
+            });
+
+            if (res.success) {
+                router.refresh();
+            } else {
+                alert(res.error || "Erreur lors de la création");
+            }
+        }
+
+        setUploading(false);
+        setIsMentionModalOpen(false);
+    };
+
+    const handleDeleteMention = async () => {
+        if (!editingMention) return;
+
+        if (!confirm("Supprimer cette mention ?")) return;
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            alert("Non authentifié");
+            return;
+        }
+
+        setUploading(true);
+
+        const res = await deleteMention({
+            mentionId: editingMention._id,
+            token,
+        });
+
+        if (res.success) {
+            router.refresh();
+        } else {
+            alert(res.error || "Erreur lors de la suppression");
+        }
+
+        setUploading(false);
+        setIsMentionModalOpen(false);
     };
 
     return (
@@ -163,21 +252,47 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
 
                 {/* Tabs Navigation */}
                 <div className="mt-6 border-t border-stroke py-0 dark:border-strokedark scrollbar-hide overflow-x-auto">
-                    <div className="flex gap-6 min-w-max px-2">
+                    <div className="flex gap-6 min-w-max px-2 items-center">
                         {etablissement.mentions?.map((mention) => (
-                            <button
-                                key={mention._id}
-                                onClick={() => onMentionSelect(mention._id)}
-                                className={`relative py-4 text-base font-medium transition-colors hover:text-primary ${currentMentionId === mention._id
-                                    ? "text-primary after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full after:rounded-t-sm after:bg-primary"
-                                    : "text-body-color dark:text-body-color-dark"
-                                    }`}
-                            >
-                                {mention.designation}
-                            </button>
+                            <div key={mention._id} className="relative flex items-center gap-1">
+                                <button
+                                    onClick={() => onMentionSelect(mention._id)}
+                                    className={`relative py-4 text-base font-medium transition-colors hover:text-primary ${currentMentionId === mention._id
+                                        ? "text-primary after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-full after:rounded-t-sm after:bg-primary"
+                                        : "text-body-color dark:text-body-color-dark"
+                                        }`}
+                                >
+                                    {mention.designation}
+                                </button>
+                                {isEditing && (
+                                    <button
+                                        onClick={() => handleEditMention(mention)}
+                                        className="ml-1 text-gray-400 hover:text-primary"
+                                        title="Modifier cette mention"
+                                    >
+                                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </div>
                         ))}
-                        {(!etablissement.mentions || etablissement.mentions.length === 0) && (
+                        {(!etablissement.mentions || etablissement.mentions.length === 0) && !isEditing && (
                             <span className="py-4 text-sm text-gray-500">Aucune mention disponible</span>
+                        )}
+
+                        {/* Add Mention Button */}
+                        {isEditing && (
+                            <button
+                                onClick={handleAddMention}
+                                className="flex items-center gap-1 py-4 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                                title="Ajouter une mention"
+                            >
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                </svg>
+                                Ajouter
+                            </button>
                         )}
                     </div>
                 </div>
@@ -188,6 +303,16 @@ const EtabHeader = ({ etablissement, currentMentionId, onMentionSelect, isEditin
                     <div className="h-10 w-10 animate-spin rounded-full border-4 border-white border-t-primary"></div>
                 </div>
             )}
+
+            {/* Mention Modal */}
+            <MentionModal
+                isOpen={isMentionModalOpen}
+                onClose={() => setIsMentionModalOpen(false)}
+                onSubmit={handleMentionSubmit}
+                onDelete={editingMention ? handleDeleteMention : undefined}
+                initialData={editingMention ? { designation: editingMention.designation, domaineId: editingMention.domaineId } : undefined}
+                isEditing={!!editingMention}
+            />
         </div>
     );
 };

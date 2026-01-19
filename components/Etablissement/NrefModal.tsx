@@ -48,10 +48,10 @@ const NrefModal = ({ isOpen, onClose, onSubmit, initialData }: NrefModalProps) =
                             onChange={(e) => setType(e.target.value)}
                             className="w-full rounded-lg border border-stroke bg-transparent py-4 px-6 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                         >
-                            <option value="Arrêté Ministériel">Arrêté Ministériel</option>
-                            <option value="Décret">Décret</option>
-                            <option value="Ordonnance">Ordonnance</option>
-                            <option value="Autre">Autre</option>
+                            <option value="Arrêté Ministériel" className="text-black dark:text-white dark:bg-blacksection">Arrêté Ministériel</option>
+                            <option value="Décret" className="text-black dark:text-white dark:bg-blacksection">Décret</option>
+                            <option value="Ordonnance" className="text-black dark:text-white dark:bg-blacksection">Ordonnance</option>
+                            <option value="Autre" className="text-black dark:text-white dark:bg-blacksection">Autre</option>
                         </select>
                     </div>
 
