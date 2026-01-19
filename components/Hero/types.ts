@@ -1,3 +1,5 @@
+import { Agent } from "@/types/user";
+
 export interface IProvince {
     designation: string;
     code: string;
@@ -17,7 +19,7 @@ export interface IEtablissement {
     nRef?: { document: string, date: string, reference: string }[];
     coge?: {
         fonction: string;
-        agent: any;
+        agent: Agent;
     }[];
     rapports?: {
         titre: string;

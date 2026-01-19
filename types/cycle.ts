@@ -1,14 +1,3 @@
-
-// {
-//     "_id": "6968ffed72bc52e1358d504e",
-//     "designation": "Ancien système",
-//     "code": "AS",
-//     "credits": 180,
-//     "actif": true,
-//     "maquetteUrl": "",
-//     "__v": 0
-// }
-
 export interface Cycle {
     _id: string;
     designation: string;
@@ -18,28 +7,6 @@ export interface Cycle {
     maquetteUrl: string;
 }
 
-
-/*
-
-        {
-            "_id": "6969003e72bc52e1358d5053",
-            "designation": "Préparatoire",
-            "code": "PREP",
-            "description": "Science de base:\n    -Mathématique\n   -Informatique\n",
-            "cycle": {
-                "_id": "6968ffed72bc52e1358d504e",
-                "designation": "Ancien système",
-                "code": "AS",
-                "credits": 180,
-                "actif": true,
-                "maquetteUrl": "",
-                "__v": 0
-            },
-            "credits": 90,
-            "actif": true,
-            "__v": 0
-        }
-             */
 export interface Programme {
     _id: string;
     designation: string;
@@ -60,4 +27,37 @@ export interface Domaine {
     mentions: string[];
     maquetteUrl?: string;
     cycle: Cycle;
+}
+/**
+ * 
+                    {
+                        "_id": "696d935fd87085daa6356503",
+                        "designation": "Informatique Mécanique et Construction",
+                        "description": [
+                            "La Filière Informatique permet de gérer la mention IA, Réseau",
+                            "La Filière Mécanique permet de gérer la mention génie mécanique",
+                            "La Filière Construction permet de gérer la mention BTP"
+                        ],
+                        "programmes": [],
+                        "mention": "696d909464f1eee503650d51",
+                        "couverture": "https://minesursi.gouv.cd/images/WhatsApp%20Image%202025-12-15%20at%2023.24.51.jpeg",
+                        "equipe": [],
+                        "actualites": [],
+                        "createdAt": "2026-01-19T02:13:51.263Z",
+                        "updatedAt": "2026-01-19T02:13:51.263Z",
+                        "__v": 0
+                    }
+ */
+export interface Faculte {
+    _id: string;
+    designation: string;
+    description: string[];
+    programmes: any[];
+    mention: string;
+    couverture: string;
+    equipe: any[];
+    actualites: any[];
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
 }
