@@ -2,7 +2,8 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-const Footer = () => {
+const Footer = ({ cycles }: { cycles: any[] }) => {
+  console.log("Data Footer : ", cycles)
   return (
     <>
       <footer className="border-t border-stroke bg-white dark:border-strokedark dark:bg-blacksection">
@@ -30,33 +31,33 @@ const Footer = () => {
               >
                 <a href="/" className="relative">
                   <Image
-                    width={110}
-                    height={80}
-                    src="/images/logo_news.png"
+                    width={310}
+                    height={310}
+                    src="/images/entete-esu.png"
                     alt="Logo"
-                    className="dark:hidden"
+                    className="dark:hidden p-5 rounded-md shadow-md"
                   />
                   <Image
-                    width={110}
-                    height={80}
-                    src="/images/logo_news.png"
+                    width={310}
+                    height={310}
+                    src="/images/entete-esu.png"
                     alt="Logo"
-                    className="hidden dark:block"
+                    className="hidden dark:block bg-white p-5 rounded-md"
                   />
                 </a>
 
                 <p className="mb-10 mt-5">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                  ESURSI-APP | Portail du Ministère de l'ESURSI
                 </p>
 
                 <p className="mb-1.5 text-sectiontitle uppercase tracking-[5px]">
                   contact
                 </p>
                 <a
-                  href="#"
+                  href="mailto:nathan@elmes-solution.site"
                   className="text-itemtitle font-medium text-black dark:text-white"
                 >
-                  hello@solid.com
+                  nathan@elmes-solution.site
                 </a>
               </motion.div>
 
@@ -80,40 +81,40 @@ const Footer = () => {
                   className="animate_top"
                 >
                   <h4 className="mb-9 text-itemtitle2 font-medium text-black dark:text-white">
-                    Quick Links
+                    Liens rapides
                   </h4>
 
                   <ul>
                     <li>
                       <a
-                        href="#"
+                        href="/"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Home
+                        Accueil
                       </a>
                     </li>
                     <li>
                       <a
-                        href="#"
+                        href="/etude"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Product
+                        Mes études
                       </a>
                     </li>
                     <li>
                       <a
-                        href="#"
+                        href="/blog"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Careers
+                        Ministère
                       </a>
                     </li>
                     <li>
                       <a
-                        href="#"
+                        href="/support"
                         className="mb-3 inline-block hover:text-primary"
                       >
-                        Pricing
+                        Contact
                       </a>
                     </li>
                   </ul>
@@ -138,42 +139,22 @@ const Footer = () => {
                   className="animate_top"
                 >
                   <h4 className="mb-9 text-itemtitle2 font-medium text-black dark:text-white">
-                    Support
+                    Cycles
                   </h4>
 
                   <ul>
-                    <li>
-                      <a
-                        href="#"
-                        className="mb-3 inline-block hover:text-primary"
-                      >
-                        Company
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="mb-3 inline-block hover:text-primary"
-                      >
-                        Press media
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="mb-3 inline-block hover:text-primary"
-                      >
-                        Our Blog
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="#"
-                        className="mb-3 inline-block hover:text-primary"
-                      >
-                        Contact Us
-                      </a>
-                    </li>
+                    {
+                      cycles?.map((cycle, idx) => (
+                        <li key={idx}>
+                          <a
+                            href={`/programmes/${cycle._id}`}
+                            className="mb-3 inline-block hover:text-primary"
+                          >
+                            {cycle.designation}
+                          </a>
+                        </li>
+                      ))
+                    }
                   </ul>
                 </motion.div>
 
@@ -196,17 +177,17 @@ const Footer = () => {
                   className="animate_top"
                 >
                   <h4 className="mb-9 text-itemtitle2 font-medium text-black dark:text-white">
-                    Newsletter
+                    Comité de Gestion
                   </h4>
                   <p className="mb-4 w-[90%]">
-                    Subscribe to receive future updates
+                    Insérer votre matricule pour accéder à l'espace <br /> comité de gestion
                   </p>
 
-                  <form action="#">
+                  <form action="#" onSubmit={(e) => e.preventDefault()}>
                     <div className="relative">
                       <input
                         type="text"
-                        placeholder="Email address"
+                        placeholder="Matricule"
                         className="w-full rounded-full border border-stroke px-6 py-3 shadow-solid-11 focus:border-primary focus:outline-hidden dark:border-strokedark dark:bg-black dark:shadow-none dark:focus:border-primary"
                       />
 
@@ -266,16 +247,16 @@ const Footer = () => {
               <ul className="flex items-center gap-8">
                 <li>
                   <a href="#" className="hover:text-primary">
-                    English
+                    ESURSI-APP
                   </a>
                 </li>
                 <li>
                   <a href="#" className="hover:text-primary">
-                    Privacy Policy
+                    Politique de confidentialité
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:text-primary">
+                  <a href="/support" className="hover:text-primary">
                     Support
                   </a>
                 </li>
@@ -301,7 +282,7 @@ const Footer = () => {
               className="animate_top"
             >
               <p>
-                &copy; {new Date().getFullYear()} Solid. All rights reserved
+                &copy; {new Date().getFullYear()} Solid & ELMES. All rights reserved
               </p>
             </motion.div>
 

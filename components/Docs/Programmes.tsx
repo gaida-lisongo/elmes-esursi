@@ -4,17 +4,30 @@ import { Domaine, Programme } from "@/types/cycle";
 import SidebarLink from "./SidebarLink";
 import { useEffect, useState } from "react";
 import { fetchMentions, Mention } from "@/app/actions/mention";
+import Parcours from "./Parcours";
+import StudentInfo from "./StudentInfo";
 
-const Programmes = ({ data, domaines }: { data: Programme[], domaines: Domaine[] }) => {
+
+const Programmes = ({ data, domaines, annee }: { data: Programme[], domaines: Domaine[], annee: any }) => {
     const [currentTab, setCurrentTab] = useState<string>(data[0]?._id);
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedDomaine, setSelectedDomaine] = useState<Domaine | null>(null);
-    const [step, setStep] = useState<'search' | 'etabs' | 'info' | 'docs' | 'summary'>('search');
 
     // Modal state
     const [showMentionsModal, setShowMentionsModal] = useState(false);
     const [mentionsDomaine, setMentionsDomaine] = useState<Domaine | null>(null);
     const [mentions, setMentions] = useState<Mention[]>([]);
+    const [selectedMention, setSelectedMention] = useState<Mention | null>(null);
+
+    const [studentData, setStudentData] = useState<any>(null);
+    const [step, setStep] = useState<'search' | 'etabs' | 'info' | 'docs' | 'summary'>('search');
+
+
+    const [dossierData, setDossierData] = useState({
+        annee: "2026-2027",
+        document: "",
+        date: new Date().toISOString().split('T')[0]
+    });
 
     const currentProgramme = data.find((item) => item._id === currentTab);
 
@@ -216,32 +229,126 @@ const Programmes = ({ data, domaines }: { data: Programme[], domaines: Domaine[]
         <div className="animate-fade-in-up">
             <button
                 onClick={() => setStep('search')}
-                className="mb-8 flex items-center text-sm font-medium text-body-color hover:text-primary dark:text-body-color-dark dark:hover:text-primary"
+                className="mb-8 flex items-center text-sm font-medium text-body-color hover:text-primary dark:text-body-color-dark dark:hover:text-primary group"
             >
-                <svg className="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+                <svg className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
                 Retour aux domaines
             </button>
-            <h2 className="mb-6 text-2xl font-bold text-black dark:text-white">
-                Établissements pour {selectedDomaine?.designation}
-            </h2>
-            <div className="rounded-lg border border-warning bg-warning/10 p-4 text-warning-dark dark:text-warning">
-                <p>La sélection d'établissement sera disponible prochainement.</p>
+
+            <div className="mb-10">
+                <h2 className="text-2xl font-bold text-black dark:text-white md:text-3xl">
+                    Choisissez votre établissement
+                </h2>
+                <p className="mt-2 text-body-color dark:text-body-color-dark">
+                    Voici les institutions proposant le domaine <strong>{selectedDomaine?.designation}</strong>.
+                </p>
             </div>
+
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {mentions.map((mention) => (
+                    <div
+                        key={mention._id}
+                        className={`group relative overflow-hidden rounded-2xl border transition-all duration-300 ${selectedMention?._id === mention._id
+                            ? "border-primary bg-primary/5 shadow-solid-7"
+                            : "border-stroke bg-white hover:border-primary/50 hover:shadow-solid-6 dark:border-strokedark dark:bg-blacksection"
+                            }`}
+                        onClick={() => setSelectedMention(mention)}
+                    >
+                        {/* Banner Image / Style */}
+                        <div className="relative h-32 w-full overflow-hidden bg-gray-100 dark:bg-meta-4">
+                            {mention.etablissement.photo && mention.etablissement.photo[0] ? (
+                                <img
+                                    src={mention.etablissement.photo[0]}
+                                    alt={mention.etablissement.designation}
+                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                />
+                            ) : (
+                                <div className="flex h-full w-full items-center justify-center text-primary/20">
+                                    <svg className="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                    </svg>
+                                </div>
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+
+                            {/* Sigle Badge */}
+                            <div className="absolute bottom-4 left-4">
+                                <span className="rounded bg-primary px-2.5 py-1 text-xs font-bold text-white shadow-lg">
+                                    {mention.etablissement.sigle}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="p-6">
+                            <h3 className="mb-2 text-lg font-bold text-black dark:text-white transition-colors group-hover:text-primary">
+                                {mention.etablissement.designation}
+                            </h3>
+
+                            <div className="mb-4 flex flex-col gap-2">
+                                <div className="flex items-center gap-2 text-sm text-body-color dark:text-body-color-dark">
+                                    <svg className="h-4 w-4 shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    <span className="truncate">{mention.etablissement.province.designation}</span>
+                                </div>
+                                <div className="flex items-center gap-2 text-sm font-medium text-black dark:text-white">
+                                    <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                                    <span>Mention: {mention.designation}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-between gap-4 border-t border-stroke pt-4 dark:border-strokedark">
+                                <a
+                                    href={`/etablissement/${mention.etablissement._id}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    onClick={(e) => e.stopPropagation()}
+                                    className="text-sm font-semibold text-primary hover:underline"
+                                >
+                                    Fiche technique
+                                </a>
+
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        setSelectedMention(mention);
+                                        setStep('info');
+                                    }}
+                                    className="rounded-full bg-primary px-5 py-2 text-sm font-bold text-white shadow-solid-3 transition-all hover:bg-opacity-90 active:scale-95"
+                                >
+                                    S'inscrire ici
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Selected Indicator */}
+                        {selectedMention?._id === mention._id && (
+                            <div className="absolute top-4 right-4 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white shadow-lg">
+                                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                        )}
+                    </div>
+                ))}
+            </div>
+
+            {mentions.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-20 text-center">
+                    <div className="mb-4 h-20 w-20 rounded-full bg-gray-50 flex items-center justify-center text-gray-300 dark:bg-white/5">
+                        <svg className="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                    </div>
+                    <h3 className="text-xl font-bold text-black dark:text-white">Désolé !</h3>
+                    <p className="mt-2 text-body-color">Aucun établissement ne propose encore ce domaine.</p>
+                </div>
+            )}
         </div>
     );
-
-    const renderStudentInfo = () => (
-        <div>
-            <h2>Informations personnelles</h2>
-        </div>
-    );
-
-    const renderStudentDocuments = () => (
-        <div>
-            <h2>Documents</h2>
-        </div>
-    );
-
     return (
         <section className="pb-16 pt-24 md:pb-20 md:pt-28 lg:pb-24 lg:pt-32">
             <div className="container mx-auto">
@@ -269,9 +376,29 @@ const Programmes = ({ data, domaines }: { data: Programme[], domaines: Domaine[]
                         <div className="blog-details blog-details-docs rounded-lg border border-stroke bg-white px-8 py-11 shadow-three dark:border-strokedark dark:bg-blacksection sm:p-[55px] lg:mb-5 lg:px-8 xl:p-[55px]">
                             {step === 'search' && renderSearch()}
                             {step === 'etabs' && renderEtabs()}
-                            {step === 'info' && renderStudentInfo()}
-                            {step === 'docs' && renderStudentDocuments()}
-                            {step === 'summary' && <div>Résumé à venir</div>}
+                            {step === 'info' && (
+                                <StudentInfo
+                                    selectedMention={selectedMention}
+                                    onBack={() => setStep('etabs')}
+                                    onSuccess={(data) => {
+                                        setStudentData(data);
+                                        setStep('summary');
+                                    }}
+                                />
+                            )}
+                            {step === 'summary' && (
+                                <Parcours
+                                    annee={annee}
+                                    etudiant={studentData}
+                                    programme={currentProgramme}
+                                    etablissement={selectedMention?.etablissement}
+                                    onReset={() => {
+                                        setStep('search');
+                                        setSelectedMention(null);
+                                        setStudentData(null);
+                                    }}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>

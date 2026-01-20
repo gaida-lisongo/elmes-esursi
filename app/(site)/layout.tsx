@@ -1,13 +1,14 @@
-import { Inter } from "next/font/google";
 import "../globals.css";
 import type { Metadata } from "next";
 import Proivder from "./Provider";
 
-const inter = Inter({ subsets: ["latin"] });
+// Removed Google Font import due to build-time network issues
+// import { Inter } from "next/font/google";
+const inter = { className: "" }; // Using system fonts defined in CSS
 
 export const metadata: Metadata = {
-  title: "Solid | Next.js Template for Startup and SaaS",
-  description: "Built with Next.js and TypeScript",
+  title: "ESURSI-APP | Portail du Ministère de l'ESURSI",
+  description: "Portail officiel de l'Enseignement Supérieur, Universitaire et Recherche Scientifique Innovante en RDC.",
   icons: {
     icon: "/images/favicon.ico",
   },
@@ -84,7 +85,7 @@ export default async function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body className={`dark:bg-black ${inter.className}`}>
-        <Proivder menuData={fullMenuData}>{children}</Proivder>
+        <Proivder menuData={fullMenuData} cycles={cycles}>{children}</Proivder>
       </body>
     </html>
   );

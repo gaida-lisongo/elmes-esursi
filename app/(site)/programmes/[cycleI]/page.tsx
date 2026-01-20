@@ -50,9 +50,33 @@ export default async function CyclePage(props: { params: Promise<{ cycleI: strin
         </div>)
     }
 
-    return (
-        <>
-            <Programmes data={data} domaines={domaines} />
-        </>
-    );
+    try {
+        const req = await fetch("https://esursi-app.vercel.app/api/annees");
+
+        if (!req.ok) {
+            return null;
+        }
+
+        const res = await req.json();
+
+        if (!res.annees) {
+            return null;
+        }
+
+        const { annees } = res;
+        const activeAnnee = annees[0];
+
+        return (
+            <>
+                <Programmes data={data} domaines={domaines} annee={activeAnnee} />
+            </>
+        );
+    } catch (error) {
+        console.error("Error fetching annee:", error);
+        return (
+            <div>
+                <p>Aucune annee trouvée</p>
+            </div>
+        )
+    }
 }

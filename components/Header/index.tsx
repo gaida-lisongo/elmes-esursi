@@ -43,18 +43,18 @@ const Header = ({ customMenuData }: { customMenuData?: Menu[] }) => {
         <div className="flex w-full items-center justify-between xl:w-1/4">
           <a href="/">
             <Image
-              src="/images/logo_news.png"
+              src="/images/entete-esu.png"
               alt="logo"
-              width={50}
-              height={50}
-              className="hidden w-full dark:block"
+              width={150}
+              height={150}
+              className="hidden w-full dark:block p-5 rounded-md bg-white"
             />
             <Image
-              src="/images/logo_news.png"
+              src="/images/entete-esu.png"
               alt="logo"
-              width={50}
-              height={50}
-              className="w-full dark:hidden"
+              width={150}
+              height={150}
+              className="w-full dark:hidden p-5 rounded-md bg-white/3"
             />
           </a>
 
@@ -152,18 +152,19 @@ const Header = ({ customMenuData }: { customMenuData?: Menu[] }) => {
           <div className="mt-7 flex items-center gap-6 xl:mt-0">
             <ThemeToggler />
 
-            <Link
+            {/* <Link
               href="https://github.com/NextJSTemplates/solid-nextjs"
               className="text-regular font-medium text-waterloo hover:text-primary"
             >
               GitHub Repo 🌟
-            </Link>
+            </Link> */}
 
             <Link
-              href="https://nextjstemplates.com/templates/solid"
+              href="https://esursi-app.vercel.app/signin"
+              target="_blank"
               className="flex items-center justify-center rounded-full bg-primary px-7.5 py-2.5 text-regular text-white duration-300 ease-in-out hover:bg-primaryho"
             >
-              Get Pro 🔥
+              Se connecter
             </Link>
           </div>
         </div>
