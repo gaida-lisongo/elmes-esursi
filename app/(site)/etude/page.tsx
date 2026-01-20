@@ -3,7 +3,10 @@ import Hero from "@/components/Hero";
 import Feature from "@/components/Features";
 import FunFact from "@/components/FunFact";
 import { fetchDomaines } from "@/app/actions/mention";
-import { fetchStatsEsursi } from "@/app/actions/stats";
+import { fetchStatsEsursi, fetchStatsPersonnel } from "@/app/actions/stats";
+import Testimonial from "@/components/Testimonial";
+import Integration from "@/components/Integration";
+import Personnel from "@/components/Personnel";
 
 export const metadata: Metadata = {
     title: "Orientation & Vérification Ministérielle | ESURSI-APP",
@@ -14,12 +17,17 @@ const EtudePage = async () => {
     try {
         const res = await fetchDomaines();
         const stats = await fetchStatsEsursi();
+        const statsPerso = await fetchStatsPersonnel();
+
+        console.log("Detail Perso : ", statsPerso)
         const { domaines } = res;
         return (
             <main>
                 <Hero />
                 <FunFact stats={stats} />
                 <Feature domaines={domaines} />
+                <Personnel stats={statsPerso || []} />
+                {/* <Integration /> */}
             </main>
         );
     } catch (error) {
@@ -35,6 +43,8 @@ const EtudePage = async () => {
                     }
                 } />
                 <Feature domaines={[]} />
+                <Personnel stats={[]} />
+                {/* <Integration /> */}
             </main>
         );
     }
