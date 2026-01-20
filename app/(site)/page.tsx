@@ -4,10 +4,8 @@ import Search from "@/components/Hero/Search";
 import Annee from "@/components/Testimonial/Annee";
 
 export const metadata: Metadata = {
-  title: "Next.js Starter Template for SaaS Startups - Solid SaaS Boilerplate",
-
-  // other metadata
-  description: "This is Home for Solid Pro"
+  title: "ESURSI-APP | Accueil",
+  description: "Plateforme officielle de suivi, d'orientation et de vérification pour l'Enseignement Supérieur en RDC."
 };
 
 export default function Home() {

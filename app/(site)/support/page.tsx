@@ -3,10 +3,8 @@ import Contact from "@/components/Contact";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Support Page - Solid SaaS Boilerplate",
-
-  // other metadata
-  description: "This is Support page for Solid Pro"
+  title: "Support & Contact - Ministère de l'ESURSI",
+  description: "Contactez le Ministère de l'Enseignement Supérieur, Universitaire et Recherche Scientifique Innovante pour toute assistance ou information complémentaire."
 };
 
 const SupportPage = () => {

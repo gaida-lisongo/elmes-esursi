@@ -6,8 +6,8 @@ import Proivder from "./Provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Solid | Next.js Template for Startup and SaaS",
-  description: "Built with Next.js and TypeScript",
+  title: "ESURSI-APP | Portail du Ministère de l'ESURSI",
+  description: "Portail officiel de l'Enseignement Supérieur, Universitaire et Recherche Scientifique Innovante en RDC.",
   icons: {
     icon: "/images/favicon.ico",
   },
