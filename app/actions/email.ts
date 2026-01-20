@@ -2,7 +2,7 @@
 
 import nodemailer from "nodemailer";
 
-export async function sendContactEmail(formData: FormData) {
+export async function sendContactEmail(formData: FormData, attachments: { name: string, url: string }[] = []) {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const subject = formData.get("subject") as string;
@@ -23,54 +23,96 @@ export async function sendContactEmail(formData: FormData) {
         },
     });
 
+    const now = new Date();
+    const formattedDate = now.toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+    });
+
+    const attachmentsHtml = attachments.length > 0
+        ? `
+      <div style="margin-top: 40px; border-top: 1px dashed #ccc; padding-top: 20px;">
+        <h4 style="text-transform: uppercase; font-size: 14px; color: #3c50e0; margin-bottom: 15px;">Annexes / Pièces Jointes :</h4>
+        <ul style="list-style: none; padding: 0;">
+          ${attachments.map(att => `
+            <li style="margin-bottom: 8px;">
+              <a href="${att.url}" target="_blank" style="color: #1a1a1a; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: bold;">
+                <span style="color: #3c50e0;">📎</span> ${att.name} (Cliquez pour visualiser)
+              </a>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+    ` : '';
+
     const htmlContent = `
     <!DOCTYPE html>
     <html>
     <head>
       <meta charset="utf-8">
       <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; }
-        .header { background: linear-gradient(135deg, #3c50e0 0%, #1c2b9a 100%); color: white; padding: 30px; text-align: center; }
-        .content { padding: 30px; background-color: #ffffff; }
-        .footer { background-color: #f8fafc; padding: 20px; text-align: center; font-size: 12px; color: #64748b; }
-        .field { margin-bottom: 20px; }
-        .label { font-weight: bold; color: #1e293b; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; margin-bottom: 5px; display: block; }
-        .value { background-color: #f1f5f9; padding: 12px; border-radius: 6px; border-left: 4px solid #3c50e0; }
-        .message-box { background-color: #f1f5f9; padding: 20px; border-radius: 8px; margin-top: 10px; border: 1px inset #e2e8f0; }
+        body { font-family: 'Times New Roman', serif; line-height: 1.6; color: #1a1a1a; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        .letter-container { max-width: 800px; margin: 20px auto; background-color: #ffffff; padding: 60px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border-top: 5px solid #3c50e0; }
+        
+        /* Section 1: Top Headers */
+        .section-header { width: 100%; border-collapse: collapse; margin-bottom: 40px; }
+        .header-item { width: 50%; vertical-align: top; }
+        .date-box { text-align: right; font-style: italic; }
+        
+        /* Section 2: Subject & Recipient */
+        .section-subject { width: 100%; border-collapse: collapse; margin-bottom: 50px; font-weight: bold; }
+        .subject-val { width: 60%; vertical-align: top; text-decoration: underline; }
+        .recipient-val { width: 40%; vertical-align: top; text-align: right; }
+        
+        /* Section 3: Content */
+        .content-body { text-align: justify; margin-bottom: 40px; white-space: pre-wrap; font-size: 16px; border-top: 1px solid #eee; padding-top: 30px; }
+        
+        /* Section 4: Footer */
+        .footer { border-top: 2px double #e2e8f0; padding-top: 20px; text-align: center; font-size: 11px; color: #64748b; font-family: Arial, sans-serif; }
+        
+        .label { font-weight: bold; color: #333; }
+        .info-value { margin-bottom: 5px; }
       </style>
     </head>
     <body>
-      <div class="container">
-        <div class="header">
-          <h1 style="margin:0; font-size: 24px;">Nouveau Message de Contact</h1>
-          <p style="margin:10px 0 0; opacity: 0.8;">ESURSI-APP Portal</p>
-        </div>
-        <div class="content">
-          <div class="field">
-            <span class="label">Expéditeur</span>
-            <div class="value">${name}</div>
-          </div>
-          <div class="field">
-            <span class="label">Email</span>
-            <div class="value">${email}</div>
-          </div>
-          <div class="field">
-            <span class="label">Téléphone</span>
-            <div class="value">${phone || "Non renseigné"}</div>
-          </div>
-          <div class="field">
-            <span class="label">Objet</span>
-            <div class="value">${subject || "Pas d'objet"}</div>
-          </div>
-          <div class="field">
-            <span class="label">Message</span>
-            <div class="message-box">${message.replace(/\n/g, '<br>')}</div>
-          </div>
-        </div>
+      <div class="letter-container">
+        <!-- Section 1 -->
+        <table class="section-header">
+          <tr>
+            <td class="header-item">
+              <div class="info-value"><span class="label">Expéditeur :</span> ${name}</div>
+              <div class="info-value"><span class="label">Email :</span> ${email}</div>
+              <div class="info-value"><span class="label">Téléphone :</span> ${phone || "N/A"}</div>
+            </td>
+            <td class="header-item date-box">
+              Fait à Kinshasa, le ${formattedDate}
+            </td>
+          </tr>
+        </table>
+
+        <!-- Section 2 -->
+        <table class="section-subject">
+          <tr>
+            <td class="subject-val">
+              OBJET : ${subject || "Requête / Message de contact"}
+            </td>
+            <td class="recipient-val">
+              À Madame la Ministre de l'ESURSI
+            </td>
+          </tr>
+        </table>
+
+        <!-- Section 3 -->
+        <div class="content-body">${message}</div>
+
+        <!-- Annexes Section -->
+        ${attachmentsHtml}
+
+        <!-- Section 4 -->
         <div class="footer">
-          Ce message a été envoyé depuis le formulaire de contact du site ESURSI-APP.<br>
-          &copy; ${new Date().getFullYear()} Ministère de l'ESURSI - RDC.
+          <p>Ce message a été envoyé depuis le formulaire de contact du site officiel ESURSI-APP.</p>
+          <p>&copy; ${now.getFullYear()} Ministère de l'Enseignement Supérieur, Universitaire et Recherche Scientifique Innovante - RDC.</p>
         </div>
       </div>
     </body>
