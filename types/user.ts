@@ -40,6 +40,7 @@ export interface Etudiant {
 }
 
 export interface Dossier {
+    _id?: string;
     etudiant: string;
     status: 'PENDING' | 'OK' | 'NO';
     scolarite: [{
