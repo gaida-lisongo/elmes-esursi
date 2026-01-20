@@ -49,14 +49,14 @@ const CTA = () => {
               viewport={{ once: true }}
               className="animate_right lg:w-[45%]"
             >
-              <div className="flex items-center justify-end xl:justify-between">
+              <div className="flex items-center space-x-5  justify-end xl:justify-between">
                 <div className="relative hidden xl:block">
                   <Image
                     width={299}
                     height={299}
-                    src="/images/entete_esu.png"
+                    src="/images/entete-esu.png"
                     alt="Shape"
-                    className="animate-pulse"
+                    className="animate-pulse bg-white p-5 rounded-lg"
                   />
 
                 </div>
