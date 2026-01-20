@@ -5,6 +5,7 @@ import CTA from "@/components/CTA";
 import Pricing from "@/components/Pricing";
 import History from "@/components/History";
 import { Metadata } from "next";
+import Bibliographie from "@/components/Bibliographie";
 
 export const metadata: Metadata = {
   title: "Ministère de l'ESURSI - RDC",
@@ -13,7 +14,8 @@ export const metadata: Metadata = {
 
 const BlogPage = async () => {
   return (
-    <>
+    <main className="mt-10">
+      <Bibliographie />
       <History />
       <Brands />
       <CTA />
@@ -29,7 +31,7 @@ const BlogPage = async () => {
         </div>
       </section>
       {/* <!-- ===== Blog Grid End ===== --> */}
-    </>
+    </main>
   );
 };
 
