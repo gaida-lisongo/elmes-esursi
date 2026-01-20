@@ -84,7 +84,7 @@ export default async function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body className={`dark:bg-black ${inter.className}`}>
-        <Proivder menuData={fullMenuData}>{children}</Proivder>
+        <Proivder menuData={fullMenuData} cycles={cycles}>{children}</Proivder>
       </body>
     </html>
   );

@@ -12,9 +12,11 @@ import { Menu } from "@/types/menu";
 export default function ClientLayout({
     children,
     menuData,
+    cycles,
 }: {
     children: React.ReactNode;
     menuData?: Menu[];
+    cycles?: any[];
 }) {
     return (
         <ThemeProvider
@@ -26,7 +28,7 @@ export default function ClientLayout({
             <Header customMenuData={menuData} />
             <ToasterContext />
             {children}
-            <Footer />
+            <Footer cycles={cycles || []} />
             <ScrollToTop />
         </ThemeProvider>
     );
