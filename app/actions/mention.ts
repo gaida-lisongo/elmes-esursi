@@ -13,6 +13,7 @@ export interface Domaine {
         designation: string;
         code: string;
     };
+    maquetteUrl?: string;
 }
 
 export interface DomainesResponse {
