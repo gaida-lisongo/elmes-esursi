@@ -1,104 +1,93 @@
-# Solid - Free Next.js Web Template and Starter Kit for SaaS
+# ESURSI-APP | Portail du Ministère de l'ESURSI
 
-Solid is a free Next.js template specifically crafted for startups, SaaS, and software websites. It provides an extensive array of necessary sections, elements, and pages required to build a fully-equipped website for any SaaS, software, or startup site. Comes with all cutting edge React and Next.js features - **Built with Next.js 16, React 19 and TypeScript.**
+[![Next.js](https://img.shields.io/badge/Next.js-16.0-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19.2-blue?style=flat-square&logo=react)](https://react.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.1-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.2-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 
-This Next.js template's homepage comes with an awesome hero area, logos of associated brands, a features section, an about section, another features section with tabs, counters, and star ratings, integration options, clear call-to-actions, an FAQ section with accordions, a testimonials section, pricing tables, a contact page, a blog, and a distinctive footer.
+**ESURSI-APP** est le portail web officiel du Ministère de l'Enseignement Supérieur, Universitaire et Recherche Scientifique Innovante (ESURSI) de la République Démocratique du Congo. Conçu avec une approche moderne et une esthétique premium, il sert de vitrine institutionnelle et d'outil de communication directe entre le ministère et les citoyens.
 
-**Solid Next.js template packed with all necessary external pages** - such as login, registration, blog grids, and single blog pages, among others. This broad collection of pages provides all the necessary tools to create a feature-packed, comprehensive, and visually appealing website or landing page for software, a web application, or SaaS.
+---
 
-### [🔥 Get Solid Pro - Next.js SaaS Boilerplate and Starter Kit](https://nextjstemplates.com/templates/solid)
+## 🌟 Fonctionnalités Clés
 
-### [🚀 Solid PRO Live Demo](https://solid.nextjstemplates.com/)
+### 🏛️ Patrimoine & Histoire
+- **Évolution Temporelle** : Une section dédiée retraçant l'histoire de l'enseignement supérieur en RDC, de l'Université Lovanium à la révolution numérique actuelle.
+- **Biographie Ministérielle** : Présentation détaillée du parcours académique et professionnel de la Ministre (S.E. Prof. Dr. Marie-Thérèse Sombo Ayanne Safi Mukuna) avec une interface dynamique et immersive.
 
-### [🚀 Solid FREE Live Demo](https://solid-free.nextjstemplates.com/)
+### 🏢 Structure Organisationnelle
+- **Exploration des Organes** : Visualisation complète de la structure du ministère via une interface modale interactive, présentant les différents services et départements.
+- **Missions Institutionnelles** : Clarification des objectifs stratégiques du ministère pour le développement scientifique de la nation.
 
-### Solid PRO vs Solid FREE Comparison 📊
+### � Communication & Support
+- **Système de Contact Avancé** : Formulaire de contact intégré avec validation en temps réel.
+- **Gestion des Annexes** : Possibilité pour les usagers de joindre des photos et documents à leurs messages (hébergement sécurisé via Cloudinary).
+- **Formalisme Administratif** : Génération automatique d'emails formatés selon le protocole des lettres administratives officielles pour une meilleure gestion par le cabinet.
 
-#### [Solid PRO](https://solid.nextjstemplates.com/)
+### 📚 Contenu Dynamique
+- **Cycles & Programmes** : Synchronisation en temps réel avec la plateforme de gestion académique pour afficher les offres de formation disponibles.
+- **Recherche & Orientation** : Outil de recherche intégré pour faciliter l'accès aux informations critiques.
 
-- SaaS Boilerplate + Starter Kit with Essential Integrations and Functionalities
-- Essential Integrations: Auth, DB, Stripe, MDX and More ...
-- Fully Functional, Ready to Use Sanity Blog Support
-- Premium Email Support
-- Functional External Pages
-- Free Lifetime Future Updates
+---
 
-___
+## �️ Stack Technique
 
-#### [Solid FREE](https://solid-free.nextjstemplates.com/)
+- **Framework** : [Next.js 16](https://nextjs.org/) (App Router, Server Actions)
+- **UI & Animation** : [React 19](https://reactjs.org/), [Tailwind CSS 4](https://tailwindcss.com/), [Framer Motion 12](https://www.framer.com/motion/)
+- **Composants Dynamiques** : [Swiper 12](https://swiperjs.com/) pour les carrousels interactifs.
+- **Services Backend** :
+  - **Emailing** : [Nodemailer](https://nodemailer.com/) avec SMTP sécurisé.
+  - **Stockage Média** : [Cloudinary API](https://cloudinary.com/).
+  - **Notifications** : [React Hot Toast](https://react-hot-toast.com/).
 
-- Only UI - Coded for Next.js
-- No Integrations
-- No Functional Blogging System
-- External Pages without Functions/Integrations
-- Community Support
-- Free Lifetime Future Updates
+---
 
-___
+## 🚀 Installation & Lancement
 
-### [📦 Download](https://nextjstemplates.com/templates/solid)
+1. **Clonage du dépôt** :
+   ```bash
+   git clone https://github.com/gaida-lisongo/elmes-esursi.git
+   cd solid-nextjs-main
+   ```
 
-### [🔥 Get Pro](https://nextjstemplates.com/templates/solid)
+2. **Configuration environnementale** :
+   Créez un fichier `.env.local` à la racine et renseignez vos identifiants :
+   ```env
+   # SMTP Configuration
+   SMTP_HOST=...
+   SMTP_PORT=...
+   SMTP_USER=...
+   SMTP_PASS=...
 
-### [🔌 Documentation](https://nextjstemplates.com/docs)
+   # Cloudinary Configuration
+   CLOUDINARY_CLOUD_NAME=...
+   CLOUDINARY_API_KEY=...
+   CLOUDINARY_API_SECRET=...
+   ```
 
-### ⚡ Deploy Now
+3. **Installation des dépendances** :
+   ```bash
+   pnpm install
+   ```
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FNextJSTemplates%2Fsolid-nextjs)
+4. **Lancement en développement** :
+   ```bash
+   pnpm dev
+   ```
 
-[![Deploy with Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/NextJSTemplates/solid-nextjs)
+---
 
-## Installation
+## 🏗️ Architecture du Projet
 
-Here are the steps you need to follow to install the dependencies.
+- `app/` : Routes (App Router) et Logique Serveur (Server Actions).
+- `components/` : Composants UI modulaires (Header, Footer, History, Bibliographie, etc.).
+- `public/` : Assets statiques et images institutionnelles.
+- `types/` : Définitions TypeScript pour une intégrité des données maximale.
 
-1.Download and extract the template from **Next.js Templates.**
+---
 
-2.**cd** into the template directory then run this command to install all the dependencies
+## � Licence
 
-```bash
-    npm install --legacy-peer-deps
-```
+Ce projet est la propriété du **Ministère de l'ESURSI - RDC**. Développé en collaboration avec **ELMES**.
 
-**Note:** As of right now React 19 causes peer dependencies issues with some packages, so the `legacy-peer-deps` flag is required.
-
-You can start the project on the local server
-
-```bash
-    npm run dev
- ```
-
-It’ll start the template on [localhost:3000](http://localhost:3000).
-
-The documentation includes all the guides you need for the integrations.
-
-### Deploying on PaaS
-
-If you are using a GitHub repo then you can go with free-of-cost and easy-to-use options like [Vercel](https://vercel.com/), or [Netlify](https://netlify.com/) they offer decent-free tiers for Next.js hosting.
-
-### 📄 License
-
-Solid Free is 100% free and open-source, feel free to use with your personal and commercial projects.
-
-### 💜 Support
-
-If you like the template, please star this repository to inspire the team to create more stuff like this and reach more users like you!
-
-### ✨ Browse and Download - Best Free [Next.js Templates](https://nextjstemplates.com/templates)
-
-### Update Log
-
-**04 December 2025**
-
-- Upgraded to Next.js 16
-- Update swiper to v12
-
-**10 April 2025**
-
-- Update eslint to v9.24.0 to resolve peer deps warning during installation.
-- Migrate to tailwind v4
-
-**29 Jan 2025**
-
-- Upgraded to Next.js 15
-- Update framer-motion to v12.0.6 for React 19 support.
+&copy; 2026 Ministère de l'Enseignement Supérieur, Universitaire et Recherche Scientifique Innovante. Tous droits réservés.
