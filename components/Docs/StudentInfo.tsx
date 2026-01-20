@@ -78,6 +78,7 @@ const StudentInfo = ({ selectedMention, onBack, onSuccess }: StudentInfoProps) =
         try {
             const res = await createEtudiant(studentData);
             if (res.success) {
+                console.log("Student data : ", res.data);
                 setStudentId(res.data._id);
                 setSubStep(4); // Move to Documents step
                 toast.success("Identité enregistrée ! Prochaine étape : Constitution du dossier.");

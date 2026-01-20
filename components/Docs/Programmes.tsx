@@ -392,6 +392,11 @@ const Programmes = ({ data, domaines, annee }: { data: Programme[], domaines: Do
                                     etudiant={studentData}
                                     programme={currentProgramme}
                                     etablissement={selectedMention?.etablissement}
+                                    onReset={() => {
+                                        setStep('search');
+                                        setSelectedMention(null);
+                                        setStudentData(null);
+                                    }}
                                 />
                             )}
                         </div>
