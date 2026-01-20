@@ -21,3 +21,31 @@ export interface Agent {
     }[];
     action: boolean;
 }
+
+export interface Etudiant {
+    nom: string;
+    postNom: string;
+    prenom: string;
+    dateNaissance: Date;
+    lieuNaissance: string;
+    nationalite: string;
+    sexe: 'Masculin' | 'Feminin';
+    adresse: string;
+    telephone: string;
+    email: string;
+    grade: 'Diplomé' | 'Gradué' | 'Licencié' | 'Magistral' | 'Doctorat';
+    photo?: string;
+    matricule: string;
+    action: boolean;
+}
+
+export interface Dossier {
+    etudiant: string;
+    status: 'PENDING' | 'OK' | 'NO';
+    scolarite: [{
+        annee: string;
+        document: string;
+        date: string;
+        status: 'PENDING' | 'OK' | 'NO';
+    }]
+}
