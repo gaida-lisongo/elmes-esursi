@@ -4,6 +4,7 @@ import { Parcours as IParcours } from "@/types/paiement";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-hot-toast";
+import { generateParcoursPDF } from "@/app/lib/pdfGenerator";
 
 const ParcoursSubscriber = ({ annee, etudiant, programme, etablissement, onReset }: { annee: any, etudiant: any, programme: any, etablissement: any, onReset: () => void }) => {
 
@@ -14,7 +15,15 @@ const ParcoursSubscriber = ({ annee, etudiant, programme, etablissement, onReset
     const [parcours, setParcours] = useState<IParcours | null>(null);
 
     const handlePrint = () => {
-        window.print();
+        generateParcoursPDF({
+            etudiant,
+            programme,
+            etablissement,
+            annee,
+            orderNumber,
+            amount: formPaiement.amount,
+            currency: formPaiement.currency
+        });
     };
 
     // ... (rest of the handle functions stay same, but I need to make sure I don't break them)
@@ -126,119 +135,8 @@ const ParcoursSubscriber = ({ annee, etudiant, programme, etablissement, onReset
 
     return (
         <div className="w-full max-w-4xl mx-auto p-4 md:p-8">
-            <style jsx global>{`
-                @media print {
-                    nav, footer, button, .no-print, .blog-details-docs > :not(.print-content) {
-                        display: none !important;
-                    }
-                    body {
-                        background: white !important;
-                        padding: 0 !important;
-                    }
-                    .print-content {
-                        display: block !important;
-                        padding: 20px !important;
-                    }
-                    .page-break {
-                        page-break-after: always;
-                    }
-                    .receipt-card {
-                        border: 2px solid #000 !important;
-                        padding: 20px;
-                        margin-bottom: 20px;
-                    }
-                }
-                .print-content {
-                    display: none;
-                }
-            `}</style>
-
-            {/* Print Layout */}
-            <div className="print-content text-black">
-                {/* Page 1 */}
-                <div className="page-break space-y-10 p-8 border-2 border-black rounded-lg">
-                    <div className="flex justify-between items-start border-b-2 border-black pb-6">
-                        <div className="space-y-1">
-                            <h1 className="text-3xl font-black uppercase tracking-tighter">PREUVE D'INSCRIPTION</h1>
-                            <p className="text-sm font-bold">SYSTÈME NATIONAL D'ORIENTATION (ESURSI)</p>
-                        </div>
-                        <div className="text-right">
-                            <p className="font-bold">N° REF: {orderNumber || "EN-ATTENTE"}</p>
-                            <p className="text-xs">Généré le: {new Date().toLocaleString('fr-FR')}</p>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-10">
-                        <div className="space-y-4">
-                            <h2 className="text-lg font-bold border-b border-black">INFORMATIONS ÉTUDIANT</h2>
-                            <div className="space-y-1">
-                                <p><span className="font-bold">NOM :</span> {etudiant?.nom}</p>
-                                <p><span className="font-bold">POSTNOM :</span> {etudiant?.postNom}</p>
-                                <p><span className="font-bold">PRÉNOM :</span> {etudiant?.prenom}</p>
-                                <p><span className="font-bold">SEXE :</span> {etudiant?.sexe}</p>
-                                <p><span className="font-bold">EMAIL :</span> {etudiant?.email}</p>
-                                <p><span className="font-bold">TÉL :</span> {etudiant?.telephone}</p>
-                            </div>
-                        </div>
-                        <div className="space-y-4">
-                            <h2 className="text-lg font-bold border-b border-black">INSCRIPTION DÉTAILS</h2>
-                            <div className="space-y-1">
-                                <p><span className="font-bold">ÉTABLISSEMENT :</span> {etablissement?.designation}</p>
-                                <p><span className="font-bold">MENTION :</span> {programme?.designation}</p>
-                                <p><span className="font-bold">ANNÉE :</span> {annee?.debut}-{annee?.fin}</p>
-                                <p><span className="font-bold">PROVINCE :</span> {etablissement?.province?.designation}</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="pt-10 border-t-2 border-black">
-                        <h2 className="text-lg font-bold mb-4">RECU DE PAIEMENT MOBILE</h2>
-                        <div className="bg-gray-100 p-6 rounded-lg border border-black grid grid-cols-2 gap-4">
-                            <div>
-                                <p className="text-sm">Montant Payé</p>
-                                <p className="text-2xl font-black">{formPaiement.amount.toLocaleString()} {formPaiement.currency}</p>
-                            </div>
-                            <div className="text-right">
-                                <p className="text-sm">Statut</p>
-                                <p className="text-xl font-bold text-green-700">PAIEMENT CONFIRMÉ</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="pt-20 flex justify-between italic text-xs">
-                        <p>Signature de l'Étudiant</p>
-                        <p>Cachet de l'Administration ESURSI</p>
-                    </div>
-                </div>
-
-                {/* Page 2 */}
-                <div className="p-8 border-2 border-black rounded-lg mt-10">
-                    <h2 className="text-2xl font-black mb-6 text-center underline">CONDITIONS ET ÉTAPES SUIVANTES</h2>
-                    <div className="space-y-6 text-sm leading-relaxed">
-                        <section>
-                            <h3 className="font-bold mb-2">1. VALIDATION DU DOSSIER PHYISIQUE</h3>
-                            <p>L'étudiant est tenu de se présenter au service de scolarité de l'établissement mentionné muni de ce reçu et des originaux de ses documents (Diplôme d'État, bulletins, etc.) pour validation finale du dossier.</p>
-                        </section>
-                        <section>
-                            <h3 className="font-bold mb-2">2. CARTE D'ÉTUDIANT</h3>
-                            <p>Après validation physique, une carte d'étudiant numérique et physique sera délivrée pour permettre l'accès aux cours et aux services académiques.</p>
-                        </section>
-                        <section>
-                            <h3 className="font-bold mb-2">3. RÈGLEMENT INTÉRIEUR</h3>
-                            <p>En s'inscrivant, l'étudiant s'engage à respecter les lois et règlements de la République ainsi que le règlement intérieur de l'établissement choisi.</p>
-                        </section>
-
-                        <div className="mt-20 p-4 border border-dashed border-black text-center">
-                            <p className="font-bold">CODE DE VÉRIFICATION UNIQUE</p>
-                            <p className="text-lg font-mono tracking-widest">{orderNumber?.substring(0, 10).toUpperCase()}</p>
-                            <p className="text-[10px] mt-2 text-gray-400 italic">Authenticité vérifiable sur https://esursi.cd/verify</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
             {/* Stepper Header (Normal view) */}
-            <div className="mb-12 no-print">
+            <div className="mb-12">
                 <div className="flex items-center justify-between relative">
                     <div className="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 dark:bg-gray-700 -translate-y-1/2 z-0" />
                     <div
@@ -278,7 +176,7 @@ const ParcoursSubscriber = ({ annee, etudiant, programme, etablissement, onReset
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -20 }}
                     transition={{ duration: 0.3 }}
-                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl p-6 md:p-10 shadow-xl dark:shadow-2xl backdrop-blur-sm bg-opacity-80 dark:bg-opacity-50 no-print"
+                    className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-3xl p-6 md:p-10 shadow-xl dark:shadow-2xl backdrop-blur-sm bg-opacity-80 dark:bg-opacity-50"
                 >
                     {currentStep === 1 && (
                         <div className="space-y-8">
