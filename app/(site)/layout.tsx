@@ -1,9 +1,10 @@
-import { Inter } from "next/font/google";
 import "../globals.css";
 import type { Metadata } from "next";
 import Proivder from "./Provider";
 
-const inter = Inter({ subsets: ["latin"] });
+// Removed Google Font import due to build-time network issues
+// import { Inter } from "next/font/google";
+const inter = { className: "" }; // Using system fonts defined in CSS
 
 export const metadata: Metadata = {
   title: "ESURSI-APP | Portail du Ministère de l'ESURSI",
