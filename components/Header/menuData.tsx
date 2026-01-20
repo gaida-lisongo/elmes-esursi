@@ -10,9 +10,9 @@ const menuData: Menu[] = [
   // Placeholder for dynamic cycles, will be merged in parent
   {
     id: 2,
-    title: "Features",
+    title: "Etude",
     newTab: false,
-    path: "/#features",
+    path: "/etude",
   },
   {
     id: 2.1,

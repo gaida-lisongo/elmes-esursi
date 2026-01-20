@@ -49,3 +49,25 @@ export async function createDossier(studentId: string, payload: any) {
         return { success: false, error: "Erreur réseau" };
     }
 }
+
+export async function fetchEtudiantByMatricule(matricule: string) {
+    try {
+        const response = await fetch(`${BASE_URL}/etudiants?matricule=${encodeURIComponent(matricule)}`, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            return { success: true, data: data.data, message: data.message };
+        }
+
+        return { success: false, error: data.message || "Étudiant non trouvé" };
+    } catch (error) {
+        console.error("Error fetching student:", error);
+        return { success: false, error: "Erreur réseau" };
+    }
+}
